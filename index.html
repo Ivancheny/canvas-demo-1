@@ -25,12 +25,15 @@
         ctx.fillStyle = "black";
         ctx.strokeStyle = "none";
 
+        // 鼠标点击时开始画
         canvas.onmousedown = () => {
             painting = true
         }
 
+        // 鼠标移动时画线
         canvas.onmousemove = (e) => {
             if (painting === true) {
+                // 画圆
                 ctx.beginPath();
                 ctx.arc(e.clientX, e.clientY, 10, 0, 2 * Math.PI);
                 ctx.stroke();
@@ -40,6 +43,7 @@
             }
         }
 
+        // 鼠标离开时不动
         canvas.onmouseup = () => {
             painting = false
         }
