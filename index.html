@@ -19,25 +19,55 @@
 
         let ctx = canvas.getContext("2d");
 
+        // 设置画点属性
+        ctx.fillStyle = "black"; // 填充样式
+        ctx.strokeStyle = "none"; // 描边样式
+        ctx.lineWidth = 8; // 线的宽度
+        ctx.lineCap = "round"; // 节点连接
+
         // 先不画
         let painting = false
+        let last
 
-        ctx.fillStyle = "black";
-        ctx.strokeStyle = "none";
+        // 检测设备是否可触屏
+        var isTouchDevice = 'ontouchstart' in document.documentElement;
+        console.log(isTouchDevice)
 
-        // 鼠标点击时开始画
-        canvas.onmousedown = () => {
-            painting = true
+        function drawLine(x1, y1, x2, y2) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        if (isTouchDevice) {
+            // 设置触屏的起始点
+            canvas.ontouchstart = (e) => {
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                last = [x, y]
+            }
+            // 触摸手机时开始画
+            canvas.ontouchmove = (e) => {
+                let x = e.touches[0].clientX
+                let y = e.touches[0].clientY
+                drawLine(last[0], last[1], x, y)
+                last = [x, y]
+            }
+        } else {
+            // 鼠标点击时开始画
+            canvas.onmousedown = (e) => {
+                painting = true
+                last = [e.clientX, e.clientY]
+            }
         }
 
         // 鼠标移动时画线
         canvas.onmousemove = (e) => {
             if (painting === true) {
                 // 画圆
-                ctx.beginPath();
-                ctx.arc(e.clientX, e.clientY, 10, 0, 2 * Math.PI);
-                ctx.stroke();
-                ctx.fill();
+                drawLine(last[0], last[1], e.clientX, e.clientY)
+                last = [e.clientX, e.clientY]
             } else {
                 console.log('什么都不做')
             }
